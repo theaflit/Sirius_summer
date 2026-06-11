@@ -15,6 +15,11 @@ python -m venv .venv
 # Linux/macOS
 source .venv/bin/activate
 ```
+Для запуска на GPU нужно установить torch с соответствующей версией cuda. Для CPU этот шаг пропустите
+
+```bash
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
+```
 
 Установите зависимости:
 ```bash
