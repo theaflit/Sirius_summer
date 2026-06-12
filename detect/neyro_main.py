@@ -22,6 +22,7 @@ if test_cuda():
   
 # cv2.namedWindow('RGB')
 # cv2.setMouseCallback('RGB', RGB)
+
 cap = cv2.VideoCapture(BASE_DIR / "detect" / 'test_eclair_video.mp4')
 
 my_file = open(BASE_DIR / "detect" / "find_object.txt", "r")
@@ -29,13 +30,6 @@ data = my_file.read()
 class_list = data.split("\n")
 
 tracker = Tracker()
-
-fps = cap.get(cv2.CAP_PROP_FPS)
-width = 1020
-height = 500
-
-fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-out = cv2.VideoWriter('output.mp4', fourcc, fps, (width, height))
 
 while True:
     ret, frame = cap.read()
