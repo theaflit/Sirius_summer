@@ -36,7 +36,7 @@ while True:
     if not ret:
         break
 
-    frame = cv2.resize(frame, (width, height))
+    frame = cv2.resize(frame, (1020, 500))
 
     results = model.predict(frame, verbose=False)
     a = results[0].boxes.data
