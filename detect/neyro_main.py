@@ -64,14 +64,11 @@ while True:
         cv2.rectangle(frame, (x3, y3), (x4, y4), (255, 255, 255), 2)
         cvzone.putTextRect(frame, f'{id}', (x3, y3), 1, 1)
 
-    out.write(frame)
-
     cv2.imshow("RGB", frame)
 
     if cv2.waitKey(1) & 0xFF == 27:
         break
 
 cap.release()
-out.release()
 cv2.destroyAllWindows()
 
