@@ -5,22 +5,26 @@ from tracker import*
 import cvzone
 import numpy as np
 from pathlib import Path
+from test_gpu import test_cuda
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-model_path = BASE_DIR / "models" / "model.pt" #указываем версию YOLO, которую будем использовать
+model_path = BASE_DIR / "models" / "best.pt" #указываем версию YOLO, которую будем использовать
 
 model = YOLO(model_path)
+if test_cuda():
+    model.to("cuda")
 
 #def RGB(event, x, y):
 #    if event == cv2.EVENT_MOUSEMOVE:
 #        point = [x, y]
 #        print(point)
   
-cv2.namedWindow('RGB')
-cv2.setMouseCallback('RGB', RGB)
-cap = cv2.VideoCapture('test_eclair_video.mp4')
+# cv2.namedWindow('RGB')
+# cv2.setMouseCallback('RGB', RGB)
+cap = cv2.VideoCapture(BASE_DIR / "detect" / 'test_eclair_video.mp4')
 
-my_file = open("find_object.txt", "r")
+my_file = open(BASE_DIR / "detect" / "find_object.txt", "r")
 data = my_file.read()
 class_list = data.split("\n")
 
@@ -40,7 +44,7 @@ while True:
 
     frame = cv2.resize(frame, (width, height))
 
-    results = model.predict(frame)
+    results = model.predict(frame, verbose=False)
     a = results[0].boxes.data
     px = pd.DataFrame(a.cpu().numpy()).astype("float")
 
