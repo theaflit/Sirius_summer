@@ -1,17 +1,21 @@
+from queue import Queue
+from pathlib import Path
+
 import cv2
 import pandas as pd
 from ultralytics import YOLO
-from tracker import*
 import cvzone
 import numpy as np
-from pathlib import Path
-from test_gpu import check_device
+
+from detect.tracker import *
+from detect.test_gpu import check_device
 
 
 def launch_yolo(model_name: str, 
                 device: str, 
                 video: bool, 
-                video_name: str | None = None):
+                q, 
+                video_name: str | None = None,):
 
     BASE_DIR = Path(__file__).resolve().parent.parent
     model_path = BASE_DIR / "models" / model_name # указываем версию YOLO, которую будем использовать
@@ -37,7 +41,7 @@ def launch_yolo(model_name: str,
 
     tracker = Tracker()
 
-    while True:
+    while not stop:
         ret, frame = cap.read()
         if not ret:
             break
@@ -69,6 +73,21 @@ def launch_yolo(model_name: str,
             cv2.circle(frame, (x4, y4), 4, (100, 0, 255), -1)
             cv2.rectangle(frame, (x3, y3), (x4, y4), (255, 255, 255), 2)
             cvzone.putTextRect(frame, f'{id}', (x3, y3), 1, 1)
+
+            obj_center_x = (x3 + x4) // 2
+            obj_center_y = (y3 + y4) // 2
+
+            frame_center_x = frame.shape[1] // 2
+            frame_center_y = frame.shape[0] // 2
+
+            dx = obj_center_x - frame_center_x
+            dy = obj_center_y - frame_center_y
+
+            distance = (dx**2 + dy**2) ** 0.5
+
+            cv2.putText(frame, f"Dist: {distance:.2f}", (x3, y3 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2)
+
+            q.put((distance, dx, dy))
 
         cv2.imshow("RGB", frame)
 
